@@ -13,12 +13,22 @@ extern "C" {
 
 
 
+typedef enum myenum
+    {
+    MYENUM_A = 0,
+    MYENUM_B = 1,
+    MYENUM_C = 2,
+    } myenum;
+
 /// A simple type in our FFI layer.
+#pragma pack(push, 1)
 typedef struct vec2
     {
     float x;
     float y;
+    uint8_t my_enum; // myenum
     } vec2;
+#pragma pack(pop)
 
 
 /// Function using the type.

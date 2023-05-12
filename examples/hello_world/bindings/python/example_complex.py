@@ -61,20 +61,30 @@ class _Iter(object):
         return rval
 
 
+class MyEnum(ctypes.c_uint8):
+    A = 0
+    B = 1
+    C = 2
+
+
 class Vec2(ctypes.Structure):
     """ A simple type in our FFI layer."""
+    _pack_ = 1
 
     # These fields represent the underlying C data layout
     _fields_ = [
         ("x", ctypes.c_float),
         ("y", ctypes.c_float),
+        ("my_enum", MyEnum),
     ]
 
-    def __init__(self, x: float = None, y: float = None):
+    def __init__(self, x: float = None, y: float = None, my_enum: MyEnum = None):
         if x is not None:
             self.x = x
         if y is not None:
             self.y = y
+        if my_enum is not None:
+            self.my_enum = my_enum
 
     @property
     def x(self) -> float:
@@ -91,6 +101,14 @@ class Vec2(ctypes.Structure):
     @y.setter
     def y(self, value: float):
         return ctypes.Structure.__set__(self, "y", value)
+
+    @property
+    def my_enum(self) -> MyEnum:
+        return ctypes.Structure.__get__(self, "my_enum")
+
+    @my_enum.setter
+    def my_enum(self, value: MyEnum):
+        return ctypes.Structure.__set__(self, "my_enum", value)
 
 
 

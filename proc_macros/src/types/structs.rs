@@ -204,6 +204,12 @@ pub fn ffi_type_struct(attributes: &Attributes, input: TokenStream, item: ItemSt
         }
     }
 
+    let align = if let Some(x) = align_attr {
+        quote! { Some(#x) }
+    } else {
+        quote! { None }
+    };
+
     let rval_builder = if attributes.opaque {
         quote! {
             let mut rval = ::interoptopus::lang::c::OpaqueType::new(name, meta);
@@ -211,7 +217,7 @@ pub fn ffi_type_struct(attributes: &Attributes, input: TokenStream, item: ItemSt
         }
     } else {
         quote! {
-            let rval = ::interoptopus::lang::c::CompositeType::with_meta(name, fields, meta);
+            let rval = ::interoptopus::lang::c::CompositeType::with_meta(name, fields, #align, meta);
             ::interoptopus::lang::c::CType::Composite(rval)
         }
     };
@@ -243,12 +249,6 @@ pub fn ffi_type_struct(attributes: &Attributes, input: TokenStream, item: ItemSt
         }
     };
 
-    let align = if let Some(x) = align_attr {
-        quote! { Some(#x) }
-    } else {
-        quote! { None }
-    };
-
     match type_repr {
         TypeRepr::C | TypeRepr::Opaque => {
             quote! {
@@ -258,7 +258,7 @@ pub fn ffi_type_struct(attributes: &Attributes, input: TokenStream, item: ItemSt
 
                     fn type_info() -> ::interoptopus::lang::c::CType {
                         let documentation = ::interoptopus::lang::c::Documentation::from_line(#doc_line);
-                        let mut meta = ::interoptopus::lang::c::Meta::with_namespace_documentation(#namespace.to_string(), documentation, #align);
+                        let mut meta = ::interoptopus::lang::c::Meta::with_namespace_documentation(#namespace.to_string(), documentation);
                         let mut fields: ::std::vec::Vec<interoptopus::lang::c::Field> = ::std::vec::Vec::new();
                         let mut generics: ::std::vec::Vec<String> = ::std::vec::Vec::new();
 

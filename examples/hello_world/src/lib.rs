@@ -1,11 +1,20 @@
 use interoptopus::{ffi_function, ffi_type, function, Inventory, InventoryBuilder};
 
+#[ffi_type]
+#[repr(u8)]
+pub enum MyEnum {
+    A,
+    B,
+    C,
+}
+
 /// A simple type in our FFI layer.
 #[ffi_type]
-#[repr(C)]
+#[repr(C, packed)]
 pub struct Vec2 {
     pub x: f32,
     pub y: f32,
+    pub my_enum: MyEnum,
 }
 
 /// Function using the type.

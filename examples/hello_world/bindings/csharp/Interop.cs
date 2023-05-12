@@ -25,13 +25,21 @@ namespace My.Company
 
     }
 
+    public enum MyEnum
+    {
+        A = 0,
+        B = 1,
+        C = 2,
+    }
+
     /// A simple type in our FFI layer.
     [Serializable]
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public partial struct Vec2
     {
         public float x;
         public float y;
+        public MyEnum my_enum;
     }
 
 
