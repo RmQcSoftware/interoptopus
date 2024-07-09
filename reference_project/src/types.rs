@@ -264,8 +264,9 @@ pub struct Aligned1 {
 #[ffi_type]
 #[repr(C, align(64))]
 pub struct Aligned2 {
-    pub x: u8,
-    pub y: u16,
+    pub x: PrimitiveEnum,
+    pub y: PrimitiveNegativeEnum2,
+    pub z: i8,
 }
 
 #[ffi_type]

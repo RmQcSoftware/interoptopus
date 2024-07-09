@@ -143,7 +143,7 @@ def init_lib(path):
     c_lib.generic_3.restype = ctypes.c_uint8
     c_lib.generic_4.restype = ctypes.c_uint8
     c_lib.array_1.restype = ctypes.c_uint8
-    c_lib.documented.restype = ctypes.c_int
+    c_lib.documented.restype = EnumDocumented
     c_lib.ambiguous_1.restype = Vec1
     c_lib.ambiguous_2.restype = Vec2
     c_lib.ambiguous_3.restype = ctypes.c_bool
@@ -152,7 +152,7 @@ def init_lib(path):
     c_lib.namespaced_inner_slice.restype = SliceVec
     c_lib.namespaced_inner_slice_mut.restype = SliceMutVec
     c_lib.panics.restype = ctypes.c_int
-    c_lib.renamed.restype = ctypes.c_int
+    c_lib.renamed.restype = EnumRenamed
     c_lib.weird_1.restype = ctypes.c_bool
     c_lib.repr_transparent.restype = Tupled
     c_lib.pattern_ascii_pointer_1.restype = ctypes.c_uint32
@@ -325,7 +325,7 @@ def generic_4(x: ctypes.c_void_p) -> int:
 def array_1(x: Array) -> int:
     return c_lib.array_1(x)
 
-def documented(x: StructDocumented) -> ctypes.c_int:
+def documented(x: StructDocumented) -> EnumDocumented:
     """ This function has documentation."""
     return c_lib.documented(x)
 
@@ -359,7 +359,7 @@ def namespaced_inner_slice_mut(x: SliceMutVec | ctypes.Array[Vec]) -> SliceMutVe
 def panics():
     return c_lib.panics()
 
-def renamed(x: StructRenamed) -> ctypes.c_int:
+def renamed(x: StructRenamed) -> EnumRenamed:
     return c_lib.renamed(x)
 
 def sleep(millis: int):
@@ -534,7 +534,7 @@ class _Iter(object):
         return rval
 
 
-class EnumDocumented:
+class EnumDocumented(ctypes.c_int):
     """ Documented enum."""
     #  Variant A.
     A = 0
@@ -544,11 +544,25 @@ class EnumDocumented:
     C = 2
 
 
-class EnumRenamed:
+class EnumRenamed(ctypes.c_int):
     X = 0
 
 
-class FFIError:
+class PrimitiveEnum(ctypes.c_uint8):
+    AA = 0
+    BB = 1
+    CC = 2
+
+
+class PrimitiveNegativeEnum2(ctypes.c_int16):
+    AAA = 1
+    BBB = 0
+    CCC = -1
+    DDD = 32767
+    EEE = -2
+
+
+class FFIError(ctypes.c_int):
     Ok = 0
     Null = 100
     Panic = 200
@@ -592,31 +606,42 @@ class Aligned2(ctypes.Structure):
 
     # These fields represent the underlying C data layout
     _fields_ = [
-        ("x", ctypes.c_uint8),
-        ("y", ctypes.c_uint16),
+        ("x", PrimitiveEnum),
+        ("y", PrimitiveNegativeEnum2),
+        ("z", ctypes.c_int8),
     ]
 
-    def __init__(self, x: int = None, y: int = None):
+    def __init__(self, x: PrimitiveEnum = None, y: PrimitiveNegativeEnum2 = None, z: int = None):
         if x is not None:
             self.x = x
         if y is not None:
             self.y = y
+        if z is not None:
+            self.z = z
 
     @property
-    def x(self) -> int:
+    def x(self) -> PrimitiveEnum:
         return ctypes.Structure.__get__(self, "x")
 
     @x.setter
-    def x(self, value: int):
+    def x(self, value: PrimitiveEnum):
         return ctypes.Structure.__set__(self, "x", value)
 
     @property
-    def y(self) -> int:
+    def y(self) -> PrimitiveNegativeEnum2:
         return ctypes.Structure.__get__(self, "y")
 
     @y.setter
-    def y(self, value: int):
+    def y(self, value: PrimitiveNegativeEnum2):
         return ctypes.Structure.__set__(self, "y", value)
+
+    @property
+    def z(self) -> int:
+        return ctypes.Structure.__get__(self, "z")
+
+    @z.setter
+    def z(self, value: int):
+        return ctypes.Structure.__set__(self, "z", value)
 
 
 class BooleanAlignment(ctypes.Structure):
@@ -859,31 +884,42 @@ class Packed2(ctypes.Structure):
 
     # These fields represent the underlying C data layout
     _fields_ = [
-        ("x", ctypes.c_uint8),
-        ("y", ctypes.c_uint16),
+        ("x", PrimitiveEnum),
+        ("y", PrimitiveNegativeEnum2),
+        ("z", ctypes.c_int8),
     ]
 
-    def __init__(self, x: int = None, y: int = None):
+    def __init__(self, x: PrimitiveEnum = None, y: PrimitiveNegativeEnum2 = None, z: int = None):
         if x is not None:
             self.x = x
         if y is not None:
             self.y = y
+        if z is not None:
+            self.z = z
 
     @property
-    def x(self) -> int:
+    def x(self) -> PrimitiveEnum:
         return ctypes.Structure.__get__(self, "x")
 
     @x.setter
-    def x(self, value: int):
+    def x(self, value: PrimitiveEnum):
         return ctypes.Structure.__set__(self, "x", value)
 
     @property
-    def y(self) -> int:
+    def y(self) -> PrimitiveNegativeEnum2:
         return ctypes.Structure.__get__(self, "y")
 
     @y.setter
-    def y(self, value: int):
+    def y(self, value: PrimitiveNegativeEnum2):
         return ctypes.Structure.__set__(self, "y", value)
+
+    @property
+    def z(self) -> int:
+        return ctypes.Structure.__get__(self, "z")
+
+    @z.setter
+    def z(self, value: int):
+        return ctypes.Structure.__set__(self, "z", value)
 
 
 class Phantomu8(ctypes.Structure):
@@ -953,19 +989,19 @@ class StructRenamed(ctypes.Structure):
 
     # These fields represent the underlying C data layout
     _fields_ = [
-        ("e", ctypes.c_int),
+        ("e", EnumRenamed),
     ]
 
-    def __init__(self, e: ctypes.c_int = None):
+    def __init__(self, e: EnumRenamed = None):
         if e is not None:
             self.e = e
 
     @property
-    def e(self) -> ctypes.c_int:
+    def e(self) -> EnumRenamed:
         return ctypes.Structure.__get__(self, "e")
 
     @e.setter
-    def e(self, value: ctypes.c_int):
+    def e(self, value: EnumRenamed):
         return ctypes.Structure.__set__(self, "e", value)
 
 

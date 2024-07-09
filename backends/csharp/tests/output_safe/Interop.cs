@@ -18,9 +18,9 @@ namespace My.Company
         static Interop()
         {
             var api_version = Interop.pattern_api_guard();
-            if (api_version != 16012698009278542425ul)
+            if (api_version != 12093170306128981769ul)
             {
-                throw new TypeLoadException($"API reports hash {api_version} which differs from hash in bindings (16012698009278542425). You probably forgot to update / copy either the bindings or the library.");
+                throw new TypeLoadException($"API reports hash {api_version} which differs from hash in bindings (12093170306128981769). You probably forgot to update / copy either the bindings or the library.");
             }
         }
 
@@ -777,6 +777,22 @@ namespace My.Company
         X = 0,
     }
 
+    public enum PrimitiveEnum : byte
+    {
+        AA = 0,
+        BB = 1,
+        CC = 2,
+    }
+
+    public enum PrimitiveNegativeEnum2 : short
+    {
+        AAA = 1,
+        BBB = 0,
+        CCC = -1,
+        DDD = 32767,
+        EEE = -2,
+    }
+
     [Serializable]
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     public partial struct Aligned1
@@ -789,30 +805,17 @@ namespace My.Company
     [StructLayout(LayoutKind.Sequential, Pack = 64)]
     public partial struct Aligned2
     {
-        public byte x;
-        public ushort y;
+        public PrimitiveEnum x;
+        public PrimitiveNegativeEnum2 y;
+        public sbyte z;
     }
 
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
     public partial struct Array
     {
-        public byte data0;
-        public byte data1;
-        public byte data2;
-        public byte data3;
-        public byte data4;
-        public byte data5;
-        public byte data6;
-        public byte data7;
-        public byte data8;
-        public byte data9;
-        public byte data10;
-        public byte data11;
-        public byte data12;
-        public byte data13;
-        public byte data14;
-        public byte data15;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public byte[] data;
     }
 
     [Serializable]
@@ -884,8 +887,9 @@ namespace My.Company
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public partial struct Packed2
     {
-        public byte x;
-        public ushort y;
+        public PrimitiveEnum x;
+        public PrimitiveNegativeEnum2 y;
+        public sbyte z;
     }
 
     [Serializable]
@@ -985,11 +989,8 @@ namespace My.Company
     public partial struct Weird2u8
     {
         byte t;
-        byte a0;
-        byte a1;
-        byte a2;
-        byte a3;
-        byte a4;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+        byte[] a;
         IntPtr r;
     }
 

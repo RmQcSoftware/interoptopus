@@ -110,6 +110,8 @@ Methods operating on common state.
 Groups of related constants.
  - **[EnumDocumented](#EnumDocumented)** -  Documented enum.
  - **[EnumRenamed](#EnumRenamed)** - 
+ - **[PrimitiveEnum](#PrimitiveEnum)** - 
+ - **[PrimitiveNegativeEnum2](#PrimitiveNegativeEnum2)** - 
 
 ### Data Structs
 Composite data used by functions and methods.
@@ -179,17 +181,19 @@ class Aligned1(ctypes.Structure):
 #### Fields 
 - **x** -  
 - **y** -  
+- **z** -  
 #### Definition 
 ```python
 class Aligned2(ctypes.Structure):
     _pack_ = 64
 
     _fields_ = [
-        ("x", ctypes.c_uint8),
-        ("y", ctypes.c_uint16),
+        ("x", PrimitiveEnum),
+        ("y", PrimitiveNegativeEnum2),
+        ("z", ctypes.c_int8),
     ]
 
-    def __init__(self, x: int = None, y: int = None):
+    def __init__(self, x: PrimitiveEnum = None, y: PrimitiveNegativeEnum2 = None, z: int = None):
         ...
 ```
 
@@ -402,17 +406,19 @@ class Packed1(ctypes.Structure):
 #### Fields 
 - **x** -  
 - **y** -  
+- **z** -  
 #### Definition 
 ```python
 class Packed2(ctypes.Structure):
     _pack_ = 1
 
     _fields_ = [
-        ("x", ctypes.c_uint8),
-        ("y", ctypes.c_uint16),
+        ("x", PrimitiveEnum),
+        ("y", PrimitiveNegativeEnum2),
+        ("z", ctypes.c_int8),
     ]
 
-    def __init__(self, x: int = None, y: int = None):
+    def __init__(self, x: PrimitiveEnum = None, y: PrimitiveNegativeEnum2 = None, z: int = None):
         ...
 ```
 
@@ -494,10 +500,10 @@ class StructDocumented(ctypes.Structure):
 class StructRenamed(ctypes.Structure):
 
     _fields_ = [
-        ("e", ctypes.c_int),
+        ("e", EnumRenamed),
     ]
 
-    def __init__(self, e: ctypes.c_int = None):
+    def __init__(self, e: EnumRenamed = None):
         ...
 ```
 
@@ -936,7 +942,7 @@ Documented enum.
 - **C** -  Variant B. 
 #### Definition 
 ```python
-class EnumDocumented:
+class EnumDocumented(ctypes.c_int):
     A = 0
     B = 1
     C = 2
@@ -953,8 +959,50 @@ class EnumDocumented:
 - **X** -  
 #### Definition 
 ```python
-class EnumRenamed:
+class EnumRenamed(ctypes.c_int):
     X = 0
+```
+
+---
+
+
+
+ ### <a name="PrimitiveEnum">**PrimitiveEnum**</a>
+
+
+#### Variants 
+- **AA** -  
+- **BB** -  
+- **CC** -  
+#### Definition 
+```python
+class PrimitiveEnum(ctypes.c_uint8):
+    AA = 0
+    BB = 1
+    CC = 2
+```
+
+---
+
+
+
+ ### <a name="PrimitiveNegativeEnum2">**PrimitiveNegativeEnum2**</a>
+
+
+#### Variants 
+- **AAA** -  
+- **BBB** -  
+- **CCC** -  
+- **DDD** -  
+- **EEE** -  
+#### Definition 
+```python
+class PrimitiveNegativeEnum2(ctypes.c_int16):
+    AAA = 1
+    BBB = 0
+    CCC = -1
+    DDD = 32767
+    EEE = -2
 ```
 
 ---
@@ -1282,7 +1330,7 @@ def array_1(x: Array) -> int:
 This function has documentation.
 #### Definition 
 ```python
-def documented(x: StructDocumented) -> ctypes.c_int:
+def documented(x: StructDocumented) -> EnumDocumented:
     ...
 ```
 
@@ -1363,7 +1411,7 @@ def panics():
 ## renamed 
 #### Definition 
 ```python
-def renamed(x: StructRenamed) -> ctypes.c_int:
+def renamed(x: StructRenamed) -> EnumRenamed:
     ...
 ```
 

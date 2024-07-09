@@ -32,6 +32,22 @@ typedef enum my_library_enum_renamed
     MY_LIBRARY_ENUM_RENAMED_X = 0,
 } my_library_enum_renamed;
 
+typedef enum my_library_primitive_enum
+{
+    MY_LIBRARY_PRIMITIVE_ENUM_AA = 0,
+    MY_LIBRARY_PRIMITIVE_ENUM_BB = 1,
+    MY_LIBRARY_PRIMITIVE_ENUM_CC = 2,
+} my_library_primitive_enum;
+
+typedef enum my_library_primitive_negative_enum2
+{
+    MY_LIBRARY_PRIMITIVE_NEGATIVE_ENUM2_AAA = 1,
+    MY_LIBRARY_PRIMITIVE_NEGATIVE_ENUM2_BBB = 0,
+    MY_LIBRARY_PRIMITIVE_NEGATIVE_ENUM2_CCC = -1,
+    MY_LIBRARY_PRIMITIVE_NEGATIVE_ENUM2_DDD = 32767,
+    MY_LIBRARY_PRIMITIVE_NEGATIVE_ENUM2_EEE = -2,
+} my_library_primitive_negative_enum2;
+
 typedef struct my_library_generic2u8 my_library_generic2u8;
 
 typedef struct my_library_generic3 my_library_generic3;
@@ -64,8 +80,9 @@ typedef struct my_library_aligned1
 #pragma pack(push, 64)
 typedef struct my_library_aligned2
 {
-    uint8_t x;
-    uint16_t y;
+    uint8_t x; // my_library_primitive_enum
+    int16_t y; // my_library_primitive_negative_enum2
+    int8_t z;
 } my_library_aligned2;
 #pragma pack(pop)
 
@@ -108,8 +125,9 @@ typedef struct my_library_packed1
 #pragma pack(push, 1)
 typedef struct my_library_packed2
 {
-    uint8_t x;
-    uint16_t y;
+    uint8_t x; // my_library_primitive_enum
+    int16_t y; // my_library_primitive_negative_enum2
+    int8_t z;
 } my_library_packed2;
 #pragma pack(pop)
 

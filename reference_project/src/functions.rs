@@ -102,7 +102,7 @@ pub extern "C" fn aligned_to_packed1(a: Aligned1) -> Packed1 {
 #[ffi_function]
 #[no_mangle]
 pub extern "C" fn aligned_to_packed2(a: Aligned2) -> Packed2 {
-    Packed2 { x: a.x, y: a.y }
+    Packed2 { x: a.x, y: a.y, z: a.z}
 }
 
 #[ffi_function]

@@ -21,14 +21,14 @@ def init_lib(path):
     c_lib.example_double_super_complex_entity.argtypes = [ctypes.c_void_p, ctypes.POINTER(SuperComplexEntity), ctypes.POINTER(SuperComplexEntity)]
 
     c_lib.example_api_version.restype = ctypes.c_uint32
-    c_lib.example_always_fails.restype = ctypes.c_int
-    c_lib.example_create_context.restype = ctypes.c_int
-    c_lib.example_destroy_context.restype = ctypes.c_int
-    c_lib.example_print_score.restype = ctypes.c_int
-    c_lib.example_return_score.restype = ctypes.c_int
-    c_lib.example_update_score_by_callback.restype = ctypes.c_int
-    c_lib.example_write_foreign_type.restype = ctypes.c_int
-    c_lib.example_double_super_complex_entity.restype = ctypes.c_int
+    c_lib.example_always_fails.restype = FFIError
+    c_lib.example_create_context.restype = FFIError
+    c_lib.example_destroy_context.restype = FFIError
+    c_lib.example_print_score.restype = FFIError
+    c_lib.example_return_score.restype = FFIError
+    c_lib.example_update_score_by_callback.restype = FFIError
+    c_lib.example_write_foreign_type.restype = FFIError
+    c_lib.example_double_super_complex_entity.restype = FFIError
 
 
 
@@ -36,41 +36,41 @@ def example_api_version() -> int:
     """ Returns the version of this API."""
     return c_lib.example_api_version()
 
-def example_always_fails() -> ctypes.c_int:
+def example_always_fails() -> FFIError:
     """ A function that always fails."""
     return c_lib.example_always_fails()
 
-def example_create_context(context_ptr: ctypes.POINTER(ctypes.c_void_p)) -> ctypes.c_int:
+def example_create_context(context_ptr: ctypes.POINTER(ctypes.c_void_p)) -> FFIError:
     """ Creates a new instance of this library."""
     return c_lib.example_create_context(context_ptr)
 
-def example_destroy_context(context_ptr: ctypes.POINTER(ctypes.c_void_p)) -> ctypes.c_int:
+def example_destroy_context(context_ptr: ctypes.POINTER(ctypes.c_void_p)) -> FFIError:
     """ Deletes an existing instance of this library.
 
  You **must** ensure that `context_ptr` is being called with the context produced by
  `example_create_context`, otherwise bad things will happen."""
     return c_lib.example_destroy_context(context_ptr)
 
-def example_print_score(context: ctypes.c_void_p) -> ctypes.c_int:
+def example_print_score(context: ctypes.c_void_p) -> FFIError:
     """ Prints the current player score."""
     return c_lib.example_print_score(context)
 
-def example_return_score(context: ctypes.c_void_p, score: ctypes.POINTER(ctypes.c_uint32)) -> ctypes.c_int:
+def example_return_score(context: ctypes.c_void_p, score: ctypes.POINTER(ctypes.c_uint32)) -> FFIError:
     """ Updates the score."""
     return c_lib.example_return_score(context, score)
 
-def example_update_score_by_callback(context: ctypes.c_void_p, update) -> ctypes.c_int:
+def example_update_score_by_callback(context: ctypes.c_void_p, update) -> FFIError:
     """ Updates the score."""
     if not hasattr(update, "__ctypes_from_outparam__"):
         update = callbacks.fn_u32_rval_u32(update)
 
     return c_lib.example_update_score_by_callback(context, update)
 
-def example_write_foreign_type(context: ctypes.c_void_p, foreign: ctypes.POINTER(ThirdPartyVecF32)) -> ctypes.c_int:
+def example_write_foreign_type(context: ctypes.c_void_p, foreign: ctypes.POINTER(ThirdPartyVecF32)) -> FFIError:
     """ Accepts some foreign types."""
     return c_lib.example_write_foreign_type(context, foreign)
 
-def example_double_super_complex_entity(context: ctypes.c_void_p, incoming: ctypes.POINTER(SuperComplexEntity), outgoing: ctypes.POINTER(SuperComplexEntity)) -> ctypes.c_int:
+def example_double_super_complex_entity(context: ctypes.c_void_p, incoming: ctypes.POINTER(SuperComplexEntity), outgoing: ctypes.POINTER(SuperComplexEntity)) -> FFIError:
     return c_lib.example_double_super_complex_entity(context, incoming, outgoing)
 
 
@@ -115,7 +115,7 @@ class _Iter(object):
         return rval
 
 
-class FFIError:
+class FFIError(ctypes.c_int):
     """ Possible errors in our library."""
     #  All went fine.
     Ok = 0
